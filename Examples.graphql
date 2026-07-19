@@ -1,0 +1,97 @@
+# =============================================================================
+# Beispiel-Queries fuer die HotChocolate Demo
+# Einfach in Banana Cake Pop (http://localhost:5071/graphql) einfuegen
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1) Alle Buecher mit Paging, Filter, Sortierung
+# -----------------------------------------------------------------------------
+query BooksPaged {
+  books(
+    first: 10
+    where: { genre: { eq: FANTASY } }
+    order: [{ publishedOn: DESC }]
+  ) {
+    totalCount
+    pageInfo { hasNextPage endCursor }
+    nodes {
+      id
+      title
+      isbn
+      publishedOn
+      author {
+        id
+        fullName          # Auflösung per DataLoader (keine N+1 Query!)
+      }
+    }
+  }
+}
+
+# -----------------------------------------------------------------------------
+# 2) Einzelnes Buch
+# -----------------------------------------------------------------------------
+query BookById {
+  bookById(id: "PUT-GUID-HERE") {
+    id
+    title
+    author { fullName }
+  }
+}
+
+# -----------------------------------------------------------------------------
+# 3) Autor mit allen Buechern
+# -----------------------------------------------------------------------------
+query AuthorWithBooks {
+  authorById(id: "11111111-1111-1111-1111-111111111111") {
+    id
+    fullName
+    books {          # Grouped-DataLoader Batch
+      title
+      publishedOn
+      genre
+    }
+  }
+}
+
+# -----------------------------------------------------------------------------
+# 4) Mutation: Buch anlegen
+# -----------------------------------------------------------------------------
+mutation AddBook {
+  addBook(input: {
+    title: "The Silmarillion"
+    isbn: "978-0-261-10273-6"
+    publishedOn: "1977-09-15"
+    pageCount: 365
+    genre: FANTASY
+    authorId: "11111111-1111-1111-1111-111111111111"
+  }) {
+    book {
+      id
+      title
+      author { fullName }
+    }
+  }
+}
+
+# -----------------------------------------------------------------------------
+# 5) Mutation: Buch aktualisieren
+# -----------------------------------------------------------------------------
+mutation UpdateBook {
+  updateBook(input: {
+    id: "PUT-GUID-HERE"
+    pageCount: 420
+  }) {
+    book { id title pageCount }
+  }
+}
+
+# -----------------------------------------------------------------------------
+# 6) Subscription: neue Buecher live empfangen
+# -----------------------------------------------------------------------------
+subscription OnBookAdded {
+  onBookAdded {
+    id
+    title
+    author { fullName }
+  }
+}
