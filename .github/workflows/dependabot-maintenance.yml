@@ -1,0 +1,50 @@
+# =============================================================================
+# Dependabot Maintenance - DEMO-HotChocolate
+# =============================================================================
+# Merges Dependabot PRs once the PR CI that builds and tests them has passed,
+# using the reusable workflow from bauer-group/automation-templates
+# (docs/workflows/docker-maintenance.md).
+#
+# Trigger scope: no `paths:` filter, so every Dependabot PR - whatever its
+# ecosystem - gets an explicit decision (merged, or left open with an
+# annotation and a job summary) instead of silently staying open.
+# - NuGet: Dependabot changes HotChocolate.Demo.csproj. ci.yml runs on every
+#   pull request to main (no paths: filter, so global.json and the csproj
+#   are covered) and builds and tests the demo - that run must pass.
+# - GitHub Actions updates and any other PR that changes .github/ are never
+#   merged automatically (guard of the reusable workflow) - merge by hand.
+#
+# The merge is made with GITHUB_TOKEN and starts no push workflow.
+# =============================================================================
+
+name: 🤖 Dependabot Maintenance
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+# The reusable workflow declares no permissions of its own - the token has
+# exactly these. The three read scopes are needed in private repositories and
+# keep the workflow working should this repository ever be made private.
+permissions:
+  contents: write       # merge
+  pull-requests: write  # approve, read the PR
+  checks: read          # check runs and suites
+  statuses: read        # commit statuses
+  actions: read         # workflow runs
+
+jobs:
+  maintenance:
+    name: Auto-merge Dependabot PRs
+    uses: bauer-group/automation-templates/.github/workflows/docker-maintenance-dependabot.yml@main
+    with:
+      # The PR CI that builds and tests the update; a PR it did not run for
+      # stays open as "not tested".
+      required-workflows: .github/workflows/ci.yml
+      merge-method: 'squash'
+      auto-approve: true
+      # Patch updates only. Below 1.0.0 a minor update (0.3.1 -> 0.4.0) and a
+      # 0.0.z patch update count as major and stay open for review; in a
+      # grouped update the strictest dependency decides.
+      merge-update-types: 'patch'
+    secrets: inherit
