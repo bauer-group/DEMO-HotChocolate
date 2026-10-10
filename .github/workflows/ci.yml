@@ -1,0 +1,37 @@
+# Compiles the demo (Release) and runs `dotnet test` on every pull request
+# and on pushes to main, so dependency updates are verified beyond the
+# `dotnet restore` done by GitHub's automatic dependency submission.
+#
+# The template always runs `dotnet test`; against the demo project it only
+# reports that there is nothing to run. When a test project is added, put
+# both projects in a solution and point `project-path` at it.
+
+name: .NET CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Test
+    permissions:
+      contents: read
+      # Required by the template's SonarQube job (modules-code-quality.yml),
+      # which GitHub validates at run creation even though it stays disabled.
+      pull-requests: write
+    uses: bauer-group/automation-templates/.github/workflows/dotnet-build.yml@main
+    with:
+      # SDK follows <TargetFramework>net8.0</TargetFramework>; no global.json.
+      dotnet-version: '8.0.x'
+      project-path: 'HotChocolate.Demo.csproj'
+      configuration: 'Release'
+      run-tests: true
+      verbosity: 'minimal'
+    secrets: inherit
