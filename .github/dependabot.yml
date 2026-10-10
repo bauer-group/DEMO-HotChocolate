@@ -1,0 +1,49 @@
+# =============================================================================
+# Dependabot Configuration
+# =============================================================================
+# Weekly version updates for the NuGet packages of HotChocolate.Demo.csproj
+# and for the GitHub Actions used by the workflows.
+#
+# - NuGet updates change HotChocolate.Demo.csproj. ci.yml builds and tests
+#   every pull request to main (no paths: filter), and its run is what
+#   dependabot-maintenance.yml waits for before it merges a patch update.
+# - GitHub Actions updates are never merged automatically - merge by hand.
+# - Prefix "chore(deps)": a dependency update is no release of its own.
+# =============================================================================
+
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(deps)"
+    labels:
+      - "dependencies"
+      - "nuget"
+    groups:
+      # The HotChocolate packages are released together with one version -
+      # one PR keeps them in step.
+      hotchocolate:
+        patterns:
+          - "HotChocolate.*"
+      # ASP.NET Core / EF Core servicing updates in one PR. Major updates
+      # (a new .NET release) come as separate PRs and stay open for review.
+      microsoft:
+        patterns:
+          - "Microsoft.*"
+          - "System.*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "dependencies"
+      - "github-actions"
