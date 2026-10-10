@@ -38,6 +38,10 @@ HotChocolate.Demo/
 
 ## Lokal starten
 
+Voraussetzung: ein .NET 8 SDK (8.0.100 oder neuer im 8.0-Band). Die
+`global.json` legt das fest, damit lokal und in der CI derselbe Compiler
+baut.
+
 ```bash
 dotnet restore
 dotnet run

@@ -28,8 +28,11 @@ jobs:
       pull-requests: write
     uses: bauer-group/automation-templates/.github/workflows/dotnet-build.yml@main
     with:
-      # SDK follows <TargetFramework>net8.0</TargetFramework>; no global.json.
+      # SDK follows <TargetFramework>net8.0</TargetFramework>. global.json pins
+      # the 8.0 band; without it the dotnet muxer picks the newest SDK on the
+      # runner (10.x), even though setup-dotnet installed 8.0.x.
       dotnet-version: '8.0.x'
+      global-json-file: 'global.json'
       project-path: 'HotChocolate.Demo.csproj'
       configuration: 'Release'
       run-tests: true
