@@ -1,4 +1,5 @@
 using HotChocolate.Demo.Domain;
+using HotChocolate.Execution;
 
 namespace HotChocolate.Demo.GraphQL;
 
