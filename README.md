@@ -1,6 +1,6 @@
 # HotChocolate.Demo
 
-Vollstaendiges Demo-Projekt fuer HotChocolate v14 mit .NET 8, das alle
+Vollstaendiges Demo-Projekt fuer HotChocolate v16 mit .NET 8, das alle
 wichtigen Konzepte aus der Dokumentation in lauffaehigem Code zeigt.
 
 ## Aufbau

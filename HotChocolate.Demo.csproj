@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- HotChocolate v14 - GraphQL Server -->
+    <!-- HotChocolate v16 - GraphQL Server -->
     <PackageReference Include="HotChocolate.AspNetCore" Version="16.7.7" />
     <PackageReference Include="HotChocolate.Data" Version="16.7.7" />
     <PackageReference Include="HotChocolate.Data.EntityFramework" Version="16.7.7" />
